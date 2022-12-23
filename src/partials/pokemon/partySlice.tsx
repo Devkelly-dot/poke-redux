@@ -21,10 +21,13 @@ export const partySlice = createSlice(
                     state.party.push(pokemon.payload)
                 }
                 else return state;
+            },
+            remove_pokemon: (state, index: PayloadAction<number>) => {
+                state.party.splice(index.payload,1)
             }
         }
     }
 )
 
-export const {add_pokemon} = partySlice.actions;
+export const {add_pokemon, remove_pokemon} = partySlice.actions;
 export default partySlice.reducer

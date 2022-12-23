@@ -21,14 +21,14 @@ export default function SidebarPokemon()
     return(
         <div>
             <button
-                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" 
+                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-4 border border-blue-500 hover:border-transparent rounded" 
                 onClick={add_bulbasaur}>
                 add a bulbasaur
             </button>
             <h2>Your Pokemon</h2>
             {
                 party.map((pokemon,index)=>
-                    <SinglePokebox pokemon={pokemon}/>
+                    <SinglePokebox pokemon={pokemon}  key={pokemon.name+(Math.random().toString())} index={index}/>
                 )
             }
         </div>
