@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch, } from 'react-redux';
 import { add_pokemon as add_to_all, update_pokemon } from './allPokemonSlice';
 import info_axios from '../../lib/api/pokeinfo_api'
@@ -9,7 +9,9 @@ import DisplayPokeBox from './DisplayPokebox';
 export default function RandomPokeContainer()
 {
     const poke_count = 12; // show 12 pokemon
+    
     const [displayedPokemon,setDisplayedPokemon] = useState<PokeType[]>([])
+    const [page, setPage] = useState(0);
 
     const dispatch = useDispatch()
     const all_pokemon = useSelector((state:RootState)=>state.allPokemon.pokemon);
@@ -37,7 +39,6 @@ export default function RandomPokeContainer()
 
         async function setDisplayFromArray(pokemon_array:PokeType[])
         {
-            // TODO: iterate through pokemon_array, create the image url, and add the image to the pokemon object. Then update all_pokemon and displayedPokemon with that image 
             for(let i in pokemon_array)
             {
                 const target_pokemon = pokemon_array[i];
@@ -66,22 +67,28 @@ export default function RandomPokeContainer()
 
         async function initial_setup()
         {
-            
             if(all_pokemon.length < 1)
             {
                 let local_all_pokemon = await setAllPokemon();
-                setDisplayFromArray(local_all_pokemon.slice(0,poke_count))
+                setDisplayFromArray(local_all_pokemon.slice(page*poke_count,(page*poke_count)+poke_count))
             }
             else
             {
-                setDisplayFromArray(all_pokemon.slice(0,poke_count));
+                setDisplayFromArray(all_pokemon.slice(page*poke_count,(page*poke_count)+poke_count));
             }
         }
 
         initial_setup();
-    },[displayedPokemon])
+    },[displayedPokemon, page, dispatch])
 
-
+    function handlePageSwitch(new_page:number)
+    {
+        if(new_page<0)
+            return false;
+        
+        if(all_pokemon.slice(new_page*poke_count,(new_page*poke_count)+poke_count).length > 0)
+            setPage(new_page)
+    }
 
     return(
         <div>
@@ -90,6 +97,10 @@ export default function RandomPokeContainer()
                         <DisplayPokeBox pokemon = {pokemon} index = {index}/>
                     </div>)
                 }
+                <div className='flex gap-2'>
+                    <button onClick={()=>{handlePageSwitch(page-1)}}>Previous</button>
+                    <button onClick={()=>{handlePageSwitch(page+1)}}>Next</button>
+                </div>
         </div>
     )
 }
