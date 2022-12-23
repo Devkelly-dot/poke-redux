@@ -50,8 +50,8 @@ export default function Home()
                 <h1 className={globalStyles.pageHeader}>Home</h1>
                 {
                     all_pokemon.map((pokemon)=><div key={pokemon.name}>
-                        <b>{pokemon.name}</b>
                         <img src = {pokemon.search_image} alt = {`${pokemon.name}`}/>
+                        <b>{pokemon.name}</b>
                     </div>)
                 }
             </PageLayout>
