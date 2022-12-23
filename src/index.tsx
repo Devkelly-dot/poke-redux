@@ -7,12 +7,10 @@ import './index.css';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Home from './pages/Home';
 
-
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
 root.render(
-  <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
@@ -20,7 +18,6 @@ root.render(
         </Routes> 
       </BrowserRouter> 
     </Provider>
-  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

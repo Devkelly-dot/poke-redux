@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 type PokeType = {
     name: string,
-    img_url:string,
+    search_image:string,
 }
 
 export interface allPokemonState {
@@ -25,3 +25,6 @@ export const allPokemonSlice = createSlice(
         }
     }
 )
+
+export const {add_pokemon} = allPokemonSlice.actions;
+export default allPokemonSlice.reducer
