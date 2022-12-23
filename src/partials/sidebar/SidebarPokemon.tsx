@@ -1,4 +1,4 @@
-import SinglePokebox from "../pokemon/SinglePokebox";
+import SinglePokebox from "../pokemon/PartyPokebox";
 import { useSelector} from "react-redux";
 import { RootState } from "../../app/store";
 
