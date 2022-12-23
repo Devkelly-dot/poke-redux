@@ -51,6 +51,7 @@ export default function Home()
                 {
                     all_pokemon.map((pokemon)=><div key={pokemon.name}>
                         <b>{pokemon.name}</b>
+                        <img src = {pokemon.search_image} alt = {`${pokemon.name}`}/>
                     </div>)
                 }
             </PageLayout>
