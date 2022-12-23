@@ -51,6 +51,7 @@ export default function RandomPokeContainer()
                 if(name === 'mr-mime')
                     name = 'mr.mime'
 
+                
                 const url = `https://projectpokemon.org/images/normal-sprite/${name}.gif`
                 
                 const new_pokemon:PokeType = {
