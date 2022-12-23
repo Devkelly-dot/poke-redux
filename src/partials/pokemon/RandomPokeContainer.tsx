@@ -8,7 +8,7 @@ import DisplayPokeBox from './DisplayPokebox';
 
 export default function RandomPokeContainer()
 {
-    const poke_count = 12; // show 12 pokemon
+    const poke_count = 18; // show 12 pokemon
     
     const [displayedPokemon,setDisplayedPokemon] = useState<PokeType[]>([])
     const [page, setPage] = useState(0);
@@ -92,15 +92,18 @@ export default function RandomPokeContainer()
 
     return(
         <div>
-                {
-                    displayedPokemon.map((pokemon,index)=><div key={"randomBox:"+pokemon.name}>
-                        <DisplayPokeBox pokemon = {pokemon} index = {index}/>
-                    </div>)
-                }
-                <div className='flex gap-2'>
-                    <button onClick={()=>{handlePageSwitch(page-1)}}>Previous</button>
-                    <button onClick={()=>{handlePageSwitch(page+1)}}>Next</button>
-                </div>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-y-2'>
+            {
+                displayedPokemon.map((pokemon,index)=><div key={"randomBox:"+pokemon.name}>
+                    <DisplayPokeBox pokemon = {pokemon} index = {index}/>
+                </div>)
+            }
+            </div>
+            <div className='flex gap-2'>
+                <button onClick={()=>{handlePageSwitch(0)}}>1</button>
+                <button onClick={()=>{handlePageSwitch(page-1)}}>Previous</button>
+                <button onClick={()=>{handlePageSwitch(page+1)}}>Next</button>
+            </div>
         </div>
     )
 }

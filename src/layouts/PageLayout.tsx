@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { ReactNode, useState, useEffect } from "react"
 import Sidebar from "../partials/sidebar/Sidebar"
 
 interface Props
@@ -6,6 +6,24 @@ interface Props
     children: ReactNode
 }
 const PageLayout : React.FC<Props> = ({children}) =>{
+    const [showParty, setShowParty] = useState(true);
+    const [screenWidth,setScreenWidth] = useState(window.innerWidth);
+
+    useEffect(()=>{
+        function handleResize(){
+            setScreenWidth(window.innerWidth);
+        }
+
+        window.addEventListener('resize', handleResize);
+        return(()=>window.removeEventListener('resize', handleResize))
+    },[]);
+
+    useEffect(()=>{
+        if(screenWidth>=640)
+        {
+            setShowParty(true);
+        }
+    },[screenWidth])
 
     return(
         <>
@@ -14,8 +32,23 @@ const PageLayout : React.FC<Props> = ({children}) =>{
                 <div className="md:col-span-7 bg-slate-200">
                     {children}
                 </div>
-                <div>
-                    <Sidebar/>
+                <div className="md:order-last order-first">
+
+                <button id="collapse-button" className="md:hidden" onClick={()=>{setShowParty(!showParty)}}>
+                    <div className="flex gap-2">
+                        <svg viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6">
+                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                        </svg> 
+                        {!showParty?<div>Check your party</div>:<div>Hide party</div>}
+                    </div>
+                </button>
+
+                {
+                    showParty?<Sidebar/>:(
+                        <></>
+                    )
+                }
+
                 </div>
             </div>
             <div>Footer</div>
