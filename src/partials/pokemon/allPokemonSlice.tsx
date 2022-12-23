@@ -1,10 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-
-type PokeType = {
-    name: string,
-    search_image:string,
-}
+import { PokeType } from "./definePokemon";
 
 export interface allPokemonState {
     pokemon: PokeType[]
@@ -21,10 +17,20 @@ export const allPokemonSlice = createSlice(
         reducers: {
             add_pokemon: (state, pokemon: PayloadAction<PokeType>) => {
                 state.pokemon.push(pokemon.payload)
+            },
+            update_pokemon: (
+                state,
+                action: PayloadAction<{name: string, pokemon:PokeType}>
+            )=>{
+                const {name,pokemon} = action.payload;
+                const targetPokemonIndex = state.pokemon.findIndex((p)=>p.name === name);
+                if(targetPokemonIndex>=0){
+                    state.pokemon[targetPokemonIndex] = {...state.pokemon[targetPokemonIndex],...pokemon};
+                }
             }
         }
     }
 )
 
-export const {add_pokemon} = allPokemonSlice.actions;
+export const {add_pokemon, update_pokemon} = allPokemonSlice.actions;
 export default allPokemonSlice.reducer
