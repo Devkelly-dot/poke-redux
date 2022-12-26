@@ -1,0 +1,21 @@
+const typeStyles:{[key:string]:string} = {
+    "normal":"bg-orange-200",
+    "fire":"bg-orange-500",
+    "water":"bg-blue-400",
+    "grass":"bg-green-400",
+    "electric":"bg-yellow-400",
+    "ice":"bg-blue-100",
+    "fighting":"bg-red-700",
+    "poison":"bg-purple-800",
+    "ground":"bg-amber-800",
+    "flying":"bg-slate-100",
+    "psychic":"bg-fuchsia-500",
+    "bug":"bg-yellow-200",
+    "rock":"bg-amber-900",
+    "ghost":"bg-white",
+    "dragon":"bg-purple-700",
+    "dark":"bg-neutral-600",
+    "steel":"bg-slate-3",
+    "fairy":"bg-fuchsia-200",
+}
+export default typeStyles;
