@@ -113,23 +113,32 @@ export default function RandomPokeContainer()
         {
             const target_pokemon = pokemon_array[i];
             let name = target_pokemon.name;
-            let request = await info_axios.get(`/pokemon/${name}`);
-            const fetch_types = request.data.types;
-            let types = []
+            try{
+                let request = await info_axios.get(`/pokemon/${name}`);
+                if(request.status!==200)
+                {
+                    throw new Error(`Request failed with status code ${request.status}`);
+                }
+                const fetch_types = request.data.types;
+                let types = []
 
-            for(let i in fetch_types)
-            {
-                types.push(fetch_types[i].type.name)
+                for(let i in fetch_types)
+                {
+                    types.push(fetch_types[i].type.name)
+                }
+
+                const new_pokemon:PokeType = {
+                    name: target_pokemon.name,
+                    sprite:pokemon_array[i].sprite,
+                    type:types,
+                }
+
+                pokemon_array[i] = new_pokemon;
+                dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
+            } catch (error) {
+                console.error(error);
+                continue;
             }
-
-            const new_pokemon:PokeType = {
-                name: target_pokemon.name,
-                sprite:pokemon_array[i].sprite,
-                type:types,
-            }
-
-            pokemon_array[i] = new_pokemon;
-            dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
         }   
         
         setDisplayedPokemon(pokemon_array);

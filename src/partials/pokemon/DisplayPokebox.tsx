@@ -25,7 +25,7 @@ const DisplayPokeBox: React.FC<PokeProps> = ({pokemon, index}:PokeProps) => {
                     {
                         pokemon.type?.map((pokemonType:string,index)=>{
                             return(
-                                <div className={`${pokemonTypeStyles[pokemonType]} font-semibold p-1 rounded text-sm my-1`}>{pokemonType}</div>
+                                <div className={`${pokemonTypeStyles[pokemonType]} font-semibold p-1 rounded text-sm my-1`} key={pokemon.name+":"+pokemonType}>{pokemonType}</div>
                             )
                         })
                     }
