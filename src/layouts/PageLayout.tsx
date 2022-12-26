@@ -38,7 +38,7 @@ const PageLayout : React.FC<Props> = ({children}) =>{
                 <button id="collapse-button" className="md:hidden" onClick={()=>{setShowParty(!showParty)}}>
                     <div className="flex gap-2">
                         <svg viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6">
-                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                            <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
                         </svg> 
                         {!showParty?<div>Check your party</div>:<div>Hide party</div>}
                     </div>
