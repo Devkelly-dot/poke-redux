@@ -32,8 +32,9 @@ const PageLayout : React.FC<Props> = ({children}) =>{
                 <div className="md:col-span-7 bg-slate-200">
                     {children}
                 </div>
-                <div className="md:order-last order-first">
 
+
+                <div className="md:order-last order-first md:col-span-3">
                 <button id="collapse-button" className="md:hidden" onClick={()=>{setShowParty(!showParty)}}>
                     <div className="flex gap-2">
                         <svg viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6">

@@ -9,11 +9,13 @@ export default function SidebarPokemon()
     return(
         <div>
             <h2>Your Pokemon</h2>
+            <div>
             {
                 party.map((pokemon,index)=>
                     <SinglePokebox pokemon={pokemon}  key={pokemon.name+(Math.random().toString())} index={index}/>
                 )
             }
+            </div>
         </div>
     )
 }

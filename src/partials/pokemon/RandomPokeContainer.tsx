@@ -9,7 +9,8 @@ import DisplayPokeBox from './DisplayPokebox';
 export default function RandomPokeContainer()
 {
     const poke_count = 18; // show 12 pokemon
-    
+    const page_numbers_shown = [1,2,3]; // numbers at the bottom of the page that you click on to go to that specific page
+
     const [displayedPokemon,setDisplayedPokemon] = useState<PokeType[]>([])
     const [page, setPage] = useState(0);
 
@@ -100,9 +101,36 @@ export default function RandomPokeContainer()
             }
             </div>
             <div className='flex gap-2'>
-                <button onClick={()=>{handlePageSwitch(0)}}>1</button>
-                <button onClick={()=>{handlePageSwitch(page-1)}}>Previous</button>
-                <button onClick={()=>{handlePageSwitch(page+1)}}>Next</button>
+                {
+                    page!==0?<button onClick={()=>{handlePageSwitch(page-1)}}>Previous</button>:<></>
+                }
+
+                {
+                    page<page_numbers_shown.length?
+                    page_numbers_shown.map((element, index)=>
+                        <button onClick={()=>{handlePageSwitch(index)}} className={index===page?"text-blue-500":""}>{index+1}</button>):(
+                    <>
+                    <button onClick={()=>{handlePageSwitch(1)}}>{1}</button>
+                    <div>...</div>
+                    <button onClick={()=>{handlePageSwitch(page-1)}}>{page}</button>
+                    <div className='text-blue-500'>{page+1}</div>
+                    
+                    {
+                        page!==Math.ceil(all_pokemon.length / poke_count) - 1?
+                            <button onClick={()=>{handlePageSwitch(page+1)}}>{page+2}</button>:(<></>)
+                    }
+                    </>
+                    )
+                }
+
+                {
+                    (page!==Math.ceil(all_pokemon.length / poke_count) - 1 && page!==Math.ceil(all_pokemon.length / poke_count)-2)?<>
+                        <div>...</div>
+                        <button onClick={()=>{handlePageSwitch(Math.ceil(all_pokemon.length / poke_count) - 1)}}>{Math.ceil(all_pokemon.length / poke_count)}</button>
+                        <button onClick={()=>{handlePageSwitch(page+1)}}>Next</button>
+                    </>:(<></>)
+                }
+                
             </div>
         </div>
     )
