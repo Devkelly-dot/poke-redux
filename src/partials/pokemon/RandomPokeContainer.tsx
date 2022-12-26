@@ -8,7 +8,7 @@ import DisplayPokeBox from './DisplayPokebox';
 
 export default function RandomPokeContainer()
 {
-    const poke_count = 8; // show 8 pokemon
+    const poke_count = 9; // show 8 pokemon
     const page_numbers_shown = [1,2,3]; // numbers at the bottom of the page that you click on to go to that specific page
 
     const [displayedPokemon,setDisplayedPokemon] = useState<PokeType[]>([])
