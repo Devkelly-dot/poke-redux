@@ -20,15 +20,57 @@ export default function RandomPokeContainer()
     useEffect(()=>{
         async function setAllPokemon()
         {
-            const request = await info_axios.get('/generation/generation-i')
+            let request = await info_axios.get('/generation/generation-i')
             const local_all_pokemon:PokeType[] = [];
             for(let i = 0; i<request.data.pokemon_species.length; i++)
             {
                 const pokemon = request.data.pokemon_species[i];
                 let name:string = pokemon.name;
 
+                if(name === 'nidoran-f') // the image url's name is slightly different for some specific cases
+                    name = 'nidoran_f'
+                if(name === 'nidoran-m')
+                    name = 'nidoran_m'
+                if(name === 'mr-mime')
+                    name = 'mr.mime'
+
+                const url = `https://projectpokemon.org/images/normal-sprite/${name}.gif`
+
                 const dispatch_pokemon: PokeType = {
-                    name: name
+                    name: name,
+                    sprite: url,
+                }
+
+                dispatch(add_to_all(dispatch_pokemon))
+                local_all_pokemon.push(dispatch_pokemon)
+            }
+
+            request = await info_axios.get('/generation/generation-ii')
+            for(let i = 0; i<request.data.pokemon_species.length; i++)
+            {
+                const pokemon = request.data.pokemon_species[i];
+                let name:string = pokemon.name;
+                const url = `https://projectpokemon.org/images/normal-sprite/${name}.gif`
+
+                const dispatch_pokemon: PokeType = {
+                    name: name,
+                    sprite: url,
+                }
+
+                dispatch(add_to_all(dispatch_pokemon))
+                local_all_pokemon.push(dispatch_pokemon)
+            }
+
+            request = await info_axios.get('/generation/generation-iii')
+            for(let i = 0; i<request.data.pokemon_species.length; i++)
+            {
+                const pokemon = request.data.pokemon_species[i];
+                let name:string = pokemon.name;
+                const url = `https://projectpokemon.org/images/normal-sprite/${name}.gif`
+
+                const dispatch_pokemon: PokeType = {
+                    name: name,
+                    sprite: url,
                 }
 
                 dispatch(add_to_all(dispatch_pokemon))
@@ -40,28 +82,28 @@ export default function RandomPokeContainer()
 
         async function setDisplayFromArray(pokemon_array:PokeType[])
         {
-            for(let i in pokemon_array)
-            {
-                const target_pokemon = pokemon_array[i];
-                // const regex = /pokemon-species\/\d+/;
-                // const id = parseInt(pokemon.url.match(regex)[0].replace('pokemon-species/',''));
-                let name = target_pokemon.name;
-                if(name === 'nidoran-f') // the image url's name is slightly different for some specific cases
-                    name = 'nidoran_f'
-                if(name === 'nidoran-m')
-                    name = 'nidoran_m'
-                if(name === 'mr-mime')
-                    name = 'mr.mime'
+            // for(let i in pokemon_array) // WE GET SPRITE EARLIER BUT SAVING THIS FOR LATER WHEN WE HAVE TO FETCH MORE INFORMATION ON POKEMON
+            // {
+            //     const target_pokemon = pokemon_array[i];
+            //     // const regex = /pokemon-species\/\d+/;
+            //     // const id = parseInt(pokemon.url.match(regex)[0].replace('pokemon-species/',''));
+            //     let name = target_pokemon.name;
+            //     if(name === 'nidoran-f') // the image url's name is slightly different for some specific cases
+            //         name = 'nidoran_f'
+            //     if(name === 'nidoran-m')
+            //         name = 'nidoran_m'
+            //     if(name === 'mr-mime')
+            //         name = 'mr.mime'
 
                 
-                const url = `https://projectpokemon.org/images/normal-sprite/${name}.gif`
+            //     const url = `https://projectpokemon.org/images/normal-sprite/${name}.gif`
                 
-                const new_pokemon:PokeType = {
-                    name: target_pokemon.name,
-                    sprite: url,
-                }
-                dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
-            }   
+            //     const new_pokemon:PokeType = {
+            //         name: target_pokemon.name,
+            //         sprite: url,
+            //     }
+            //     dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
+            // }   
             
             setDisplayedPokemon(pokemon_array);
         }
@@ -127,8 +169,12 @@ export default function RandomPokeContainer()
                     (page!==Math.ceil(all_pokemon.length / poke_count) - 1 && page!==Math.ceil(all_pokemon.length / poke_count)-2)?<>
                         <div>...</div>
                         <button onClick={()=>{handlePageSwitch(Math.ceil(all_pokemon.length / poke_count) - 1)}}>{Math.ceil(all_pokemon.length / poke_count)}</button>
-                        <button onClick={()=>{handlePageSwitch(page+1)}}>Next</button>
                     </>:(<></>)
+                }
+
+                {
+                    (page!==Math.ceil(all_pokemon.length / poke_count) - 1)?
+                        <button onClick={()=>{handlePageSwitch(page+1)}}>Next</button>:(<></>)
                 }
                 
             </div>
