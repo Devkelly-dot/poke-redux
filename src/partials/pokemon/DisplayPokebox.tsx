@@ -1,7 +1,8 @@
 import { useDispatch } from "react-redux"
 import { add_pokemon as add_to_party } from "./partySlice"
 import { PokeType } from "./definePokemon";
-
+import pokemonTypeStyles  from './pokemonTypeStyles'
+const type = pokemonTypeStyles["fire"]
 interface PokeProps {
     pokemon:PokeType,
     index: number
@@ -18,15 +19,17 @@ const DisplayPokeBox: React.FC<PokeProps> = ({pokemon, index}:PokeProps) => {
 
     return(
         <div className="flex-col text-center">
-            <img src={pokemon.sprite} alt={`${pokemon.name} sprite`} className="m-auto h-16 md:h-16"/>
-            <div className="flex gap-2 justify-center">
-                {
-                    pokemon.type?.map((pokemonType,index)=>{
-                        return(
-                            <div>{pokemonType}</div>
-                        )
-                    })
-                }
+            <div className="flex justify-center gap-2">
+                <img src={pokemon.sprite} alt={`${pokemon.name} sprite`} className="h-16 md:h-16"/>
+                <div className="flex-col gap-2 justify-center">
+                    {
+                        pokemon.type?.map((pokemonType:string,index)=>{
+                            return(
+                                <div className={`${pokemonTypeStyles[pokemonType]} font-semibold p-1 rounded text-sm my-1`}>{pokemonType}</div>
+                            )
+                        })
+                    }
+                </div>
             </div>
             <div><b>{pokemon.name}</b></div>
             <button
