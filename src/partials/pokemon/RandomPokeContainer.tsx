@@ -17,7 +17,7 @@ export default function RandomPokeContainer()
     const dispatch = useDispatch()
     const all_pokemon = useSelector((state:RootState)=>state.allPokemon.pokemon);
 
-    useEffect(()=>{
+    useEffect(()=>{ // initial setup
         async function setAllPokemon()
         {
             let request = await info_axios.get('/generation/generation-i')
@@ -25,16 +25,17 @@ export default function RandomPokeContainer()
             for(let i = 0; i<request.data.pokemon_species.length; i++)
             {
                 const pokemon = request.data.pokemon_species[i];
-                let name:string = pokemon.name;
+                const name:string = pokemon.name;
+                let image_url_name = name;
 
                 if(name === 'nidoran-f') // the image url's name is slightly different for some specific cases
-                    name = 'nidoran_f'
+                    image_url_name = 'nidoran_f'
                 if(name === 'nidoran-m')
-                    name = 'nidoran_m'
+                    image_url_name = 'nidoran_m'
                 if(name === 'mr-mime')
-                    name = 'mr.mime'
+                    image_url_name = 'mr.mime'
 
-                const url = `https://projectpokemon.org/images/normal-sprite/${name}.gif`
+                const url = `https://projectpokemon.org/images/normal-sprite/${image_url_name}.gif`
 
                 const dispatch_pokemon: PokeType = {
                     name: name,
@@ -80,34 +81,6 @@ export default function RandomPokeContainer()
             return local_all_pokemon;
         }
 
-        async function setDisplayFromArray(pokemon_array:PokeType[])
-        {
-            // for(let i in pokemon_array) // WE GET SPRITE EARLIER BUT SAVING THIS FOR LATER WHEN WE HAVE TO FETCH MORE INFORMATION ON POKEMON
-            // {
-            //     const target_pokemon = pokemon_array[i];
-            //     // const regex = /pokemon-species\/\d+/;
-            //     // const id = parseInt(pokemon.url.match(regex)[0].replace('pokemon-species/',''));
-            //     let name = target_pokemon.name;
-            //     if(name === 'nidoran-f') // the image url's name is slightly different for some specific cases
-            //         name = 'nidoran_f'
-            //     if(name === 'nidoran-m')
-            //         name = 'nidoran_m'
-            //     if(name === 'mr-mime')
-            //         name = 'mr.mime'
-
-                
-            //     const url = `https://projectpokemon.org/images/normal-sprite/${name}.gif`
-                
-            //     const new_pokemon:PokeType = {
-            //         name: target_pokemon.name,
-            //         sprite: url,
-            //     }
-            //     dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
-            // }   
-            
-            setDisplayedPokemon(pokemon_array);
-        }
-
         async function initial_setup()
         {
             if(all_pokemon.length < 1)
@@ -122,7 +95,7 @@ export default function RandomPokeContainer()
         }
 
         initial_setup();
-    },[displayedPokemon, page, dispatch])
+    },[])
 
     function handlePageSwitch(new_page:number)
     {
@@ -132,6 +105,39 @@ export default function RandomPokeContainer()
         if(all_pokemon.slice(new_page*poke_count,(new_page*poke_count)+poke_count).length > 0)
             setPage(new_page)
     }
+
+    async function setDisplayFromArray(pokemon_array:PokeType[])
+    {
+        // fetches extra info on pokemon so we don't have to hit 300+ endpoints on immediate load. Instead we fetch as we need per page / search / filter
+        for(let i in pokemon_array) 
+        {
+            const target_pokemon = pokemon_array[i];
+            let name = target_pokemon.name;
+            let request = await info_axios.get(`/pokemon/${name}`);
+            const fetch_types = request.data.types;
+            let types = []
+
+            for(let i in fetch_types)
+            {
+                types.push(fetch_types[i].type.name)
+            }
+
+            const new_pokemon:PokeType = {
+                name: target_pokemon.name,
+                sprite:pokemon_array[i].sprite,
+                type:types,
+            }
+
+            pokemon_array[i] = new_pokemon;
+            dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
+        }   
+        
+        setDisplayedPokemon(pokemon_array);
+    }
+
+    useEffect(()=>{
+        setDisplayFromArray(all_pokemon.slice(page*poke_count,(page*poke_count)+poke_count));
+    },[page])
 
     return(
         <div>
@@ -150,9 +156,9 @@ export default function RandomPokeContainer()
                 {
                     page<page_numbers_shown.length?
                     page_numbers_shown.map((element, index)=>
-                        <button onClick={()=>{handlePageSwitch(index)}} className={index===page?"text-blue-500":""}>{index+1}</button>):(
+                        <button onClick={()=>{handlePageSwitch(index)}} className={index===page?"text-blue-500":""} key={`button:${Math.random()}${index}`}>{index+1}</button>):(
                     <>
-                    <button onClick={()=>{handlePageSwitch(1)}}>{1}</button>
+                    <button onClick={()=>{handlePageSwitch(0)}}>{1}</button>
                     <div>...</div>
                     <button onClick={()=>{handlePageSwitch(page-1)}}>{page}</button>
                     <div className='text-blue-500'>{page+1}</div>
