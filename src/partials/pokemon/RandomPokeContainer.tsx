@@ -5,10 +5,11 @@ import info_axios from '../../lib/api/pokeinfo_api'
 import { RootState } from "../../app/store";
 import { PokeType } from "./definePokemon";
 import DisplayPokeBox from './DisplayPokebox';
+import { useLocation } from 'react-router-dom';
 
 export default function RandomPokeContainer()
 {
-    
+    const location = useLocation();
     const page_numbers_shown = [1,2,3]; // numbers at the bottom of the page that you click on to go to that specific page
 
     const [displayedPokemon,setDisplayedPokemon] = useState<PokeType[]>([])
@@ -17,29 +18,41 @@ export default function RandomPokeContainer()
 
     const dispatch = useDispatch()
     const all_pokemon = useSelector((state:RootState)=>state.allPokemon.pokemon);
+    const searchParams = new URLSearchParams(window.location.search);
+    const name = searchParams.get('name');
+
+    let filteredPokemon:PokeType[]; 
+
+    if(name)
+    {
+        filteredPokemon = all_pokemon.filter(pokemon=>pokemon.name.includes(name));
+    }
+    else
+    {
+        filteredPokemon = all_pokemon;
+    }
 
     useEffect(()=>{ // initial setup
         function initial_setup()
         {
-            console.log("initial setup")
-            setDisplayFromArray(all_pokemon.slice(page*poke_count,(page*poke_count)+poke_count));
+            setDisplayFromArray(filteredPokemon.slice(page*poke_count,(page*poke_count)+poke_count));
         }
 
         initial_setup();
-    },[all_pokemon.length])
+    },[filteredPokemon.length,location])
 
     function handlePageSwitch(new_page:number)
     {
         if(new_page<0)
             return false;
         
-        if(all_pokemon.slice(new_page*poke_count,(new_page*poke_count)+poke_count).length > 0)
+        if(filteredPokemon.slice(new_page*poke_count,(new_page*poke_count)+poke_count).length > 0)
         {
             setPage(new_page)
             // set the display as soon as the page changes, this array will not have the extra information about the pokemon YET 
             // that will be set in the useEffect further down. Do this so that the page loads faster because all we need to show the user is the name and image
             // then when the types and other info load we will tag those on. 
-            setDisplayedPokemon(all_pokemon.slice(new_page*poke_count,(new_page*poke_count)+poke_count))
+            setDisplayedPokemon(filteredPokemon.slice(new_page*poke_count,(new_page*poke_count)+poke_count))
         }     
     }
 
@@ -90,11 +103,11 @@ export default function RandomPokeContainer()
     {
         const new_count = parseInt(event.target.value)
         setPokeCount(new_count);
-        setDisplayedPokemon(all_pokemon.slice(page*new_count,(page*new_count)+new_count))
+        setDisplayedPokemon(filteredPokemon.slice(page*new_count,(page*new_count)+new_count))
     }
 
     useEffect(()=>{
-        setDisplayFromArray(all_pokemon.slice(page*poke_count,(page*poke_count)+poke_count));
+        setDisplayFromArray(filteredPokemon.slice(page*poke_count,(page*poke_count)+poke_count));
     },[page, poke_count])
 
     return(
@@ -131,7 +144,7 @@ export default function RandomPokeContainer()
                     <div className='text-blue-500'>{page+1}</div>
                     
                     {
-                        page!==Math.ceil(all_pokemon.length / poke_count) - 1?
+                        page!==Math.ceil(filteredPokemon.length / poke_count) - 1?
                             <button onClick={()=>{handlePageSwitch(page+1)}}>{page+2}</button>:(<></>)
                     }
                     </>
@@ -139,14 +152,14 @@ export default function RandomPokeContainer()
                 }
 
                 {
-                    (page!==Math.ceil(all_pokemon.length / poke_count) - 1 && page!==Math.ceil(all_pokemon.length / poke_count)-2)?<>
+                    (page!==Math.ceil(filteredPokemon.length / poke_count) - 1 && page!==Math.ceil(filteredPokemon.length / poke_count)-2)?<>
                         <div>...</div>
-                        <button onClick={()=>{handlePageSwitch(Math.ceil(all_pokemon.length / poke_count) - 1)}}>{Math.ceil(all_pokemon.length / poke_count)}</button>
+                        <button onClick={()=>{handlePageSwitch(Math.ceil(filteredPokemon.length / poke_count) - 1)}}>{Math.ceil(filteredPokemon.length / poke_count)}</button>
                     </>:(<></>)
                 }
 
                 {
-                    (page!==Math.ceil(all_pokemon.length / poke_count) - 1)?
+                    (page!==Math.ceil(filteredPokemon.length / poke_count) - 1)?
                         <button onClick={()=>{handlePageSwitch(page+1)}}>Next</button>:(<></>)
                 }
                 
