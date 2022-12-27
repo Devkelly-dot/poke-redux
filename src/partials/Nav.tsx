@@ -4,7 +4,7 @@ export default function nav()
 {
     return(
         <div>
-            <Link to="/">Home</Link>
+            <Link to="/"><div>Home</div></Link>
         </div>
     )
 }

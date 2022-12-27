@@ -5,15 +5,18 @@ import reportWebVitals from './reportWebVitals';
 import App from './App';
 import { store } from './app/store';
 import PageLayout from './layouts/PageLayout';
+import { BrowserRouter } from 'react-router-dom';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
 root.render(
   <Provider store={store}>
-      <PageLayout>
-        <App/>
-      </PageLayout>   
+      <BrowserRouter>
+        <PageLayout>
+          <App/>
+        </PageLayout> 
+      </BrowserRouter>  
   </Provider>
 );
 

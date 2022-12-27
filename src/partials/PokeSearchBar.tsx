@@ -46,24 +46,27 @@ export default function PokeSearchBar()
                     </div>
                 </div>
             </div>
-            <div className="bg-white xl:w-96 m-auto">
-                {
-                    results.map((result,index)=>
-                        <Link to={`/pokemon/${result.name}`}><div 
-                            key={"search:"+result.name}
-                            className="flex items-center gap-4 hover:bg-red-200 md:px-4 max-w-full"
-                        >
-                            <div>
-                                {result.name}
-                            </div>
-                            <img 
-                                src={result.sprite}
-                                className=" h-14"
-                                alt={`searchbar ${result.name}`}/>
-                        </div></Link>
-                    )
-                }
-            </div>
+            {
+                query!==""?<div className="bg-white xl:w-96 m-auto max-h-40 overflow-y-scroll">
+                    {
+                        results.map((result,index)=>
+                            <Link to={`/pokemon/${result.name}`}><div 
+                                key={"search:"+result.name}
+                                className="flex items-center gap-4 hover:bg-red-200 md:px-4 max-w-full"
+                            >
+                                <div>
+                                    {result.name}
+                                </div>
+                                <img 
+                                    src={result.sprite}
+                                    className=" h-14"
+                                    alt={`searchbar ${result.name}`}/>
+                            </div></Link>
+                        )
+                    }
+                </div>:(<></>)
+            }
+
         </div>
     )
 }
