@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch, } from 'react-redux';
 import { add_pokemon as add_to_all, update_pokemon } from './allPokemonSlice';
 import info_axios from '../../lib/api/pokeinfo_api'
@@ -13,7 +13,7 @@ export default function RandomPokeContainer()
 
     const [displayedPokemon,setDisplayedPokemon] = useState<PokeType[]>([])
     const [page, setPage] = useState(0);
-    const [poke_count,setPokeCount] = useState(9); // show 9 pokemon
+    const [poke_count,setPokeCount] = useState(12); // show 12 pokemon
 
     const dispatch = useDispatch()
     const all_pokemon = useSelector((state:RootState)=>state.allPokemon.pokemon);

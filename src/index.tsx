@@ -4,13 +4,16 @@ import { createRoot } from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
 import { store } from './app/store';
+import PageLayout from './layouts/PageLayout';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
 root.render(
   <Provider store={store}>
-      <App/>
+      <PageLayout>
+        <App/>
+      </PageLayout>   
   </Provider>
 );
 
