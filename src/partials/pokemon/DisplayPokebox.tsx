@@ -2,6 +2,9 @@ import { useDispatch } from "react-redux"
 import { add_pokemon as add_to_party } from "./partySlice"
 import { PokeType } from "./definePokemon";
 import pokemonTypeStyles  from './pokemonTypeStyles'
+import { Link } from "react-router-dom";
+
+
 const type = pokemonTypeStyles["fire"]
 interface PokeProps {
     pokemon:PokeType,
@@ -20,7 +23,7 @@ const DisplayPokeBox: React.FC<PokeProps> = ({pokemon, index}:PokeProps) => {
     return(
         <div className="flex-col text-center">
             <div className="flex justify-center gap-2">
-                <img src={pokemon.sprite} alt={`${pokemon.name} sprite`} className="h-16 md:h-16"/>
+                <Link to={`/pokemon/${pokemon.name}`}><img src={pokemon.sprite} alt={`${pokemon.name} sprite`} className="h-16 md:h-16"/></Link>
                 <div className="flex-col gap-2 justify-center">
                     {
                         pokemon.type?.map((pokemonType:string,index)=>{
