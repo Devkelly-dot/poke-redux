@@ -8,7 +8,7 @@ import DisplayPokeBox from './DisplayPokebox';
 
 export default function RandomPokeContainer()
 {
-    const poke_count = 9; // show 8 pokemon
+    const poke_count = 9; // show 9 pokemon
     const page_numbers_shown = [1,2,3]; // numbers at the bottom of the page that you click on to go to that specific page
 
     const [displayedPokemon,setDisplayedPokemon] = useState<PokeType[]>([])
@@ -103,7 +103,13 @@ export default function RandomPokeContainer()
             return false;
         
         if(all_pokemon.slice(new_page*poke_count,(new_page*poke_count)+poke_count).length > 0)
+        {
             setPage(new_page)
+            // set the display as soon as the page changes, this array will not have the extra information about the pokemon YET 
+            // that will be set in the useEffect further down. Do this so that the page loads faster because all we need to show the user is the name and image
+            // then when the types and other info load we will tag those on. 
+            setDisplayedPokemon(all_pokemon.slice(new_page*poke_count,(new_page*poke_count)+poke_count))
+        }     
     }
 
     async function setDisplayFromArray(pokemon_array:PokeType[])
