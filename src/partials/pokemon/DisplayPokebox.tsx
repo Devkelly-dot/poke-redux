@@ -5,7 +5,6 @@ import pokemonTypeStyles  from './pokemonTypeStyles'
 import { Link } from "react-router-dom";
 
 
-const type = pokemonTypeStyles["fire"]
 interface PokeProps {
     pokemon:PokeType,
     index: number

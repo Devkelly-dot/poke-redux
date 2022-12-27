@@ -1,5 +1,6 @@
 import { ReactNode, useState, useEffect } from "react"
 import Sidebar from "../partials/sidebar/Sidebar"
+import Nav from "../partials/Nav"
 
 interface Props
 {
@@ -27,7 +28,7 @@ const PageLayout : React.FC<Props> = ({children}) =>{
 
     return(
         <>
-            <div>Nav</div>
+            <Nav/>
             <div className="grid sm:grid-cols-1 md:grid-cols-10 px-5 md:px-24">
                 <div className="md:col-span-7 bg-slate-200">
                     {children}
