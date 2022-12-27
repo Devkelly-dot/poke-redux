@@ -8,11 +8,12 @@ import DisplayPokeBox from './DisplayPokebox';
 
 export default function RandomPokeContainer()
 {
-    const poke_count = 9; // show 9 pokemon
+    
     const page_numbers_shown = [1,2,3]; // numbers at the bottom of the page that you click on to go to that specific page
 
     const [displayedPokemon,setDisplayedPokemon] = useState<PokeType[]>([])
     const [page, setPage] = useState(0);
+    const [poke_count,setPokeCount] = useState(9); // show 9 pokemon
 
     const dispatch = useDispatch()
     const all_pokemon = useSelector((state:RootState)=>state.allPokemon.pokemon);
@@ -155,12 +156,28 @@ export default function RandomPokeContainer()
         setDisplayedPokemon(pokemon_array);
     }
 
+    function handleCountChange(event:any)
+    {
+        const new_count = parseInt(event.target.value)
+        setPokeCount(new_count);
+        setDisplayedPokemon(all_pokemon.slice(page*new_count,(page*new_count)+new_count))
+    }
+
     useEffect(()=>{
         setDisplayFromArray(all_pokemon.slice(page*poke_count,(page*poke_count)+poke_count));
-    },[page])
+    },[page, poke_count])
 
     return(
         <div>
+                <label>
+                    Choose the number of Pokemon:
+                <select value={poke_count} onChange={handleCountChange}>
+                    <option value={12}>12</option>
+                    <option value={20}>20</option>
+                    <option value={30}>30</option>
+                    <option value={50}>50</option>
+                </select>
+                </label>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-y-2'>
             {
                 displayedPokemon.map((pokemon,index)=><div key={"randomBox:"+pokemon.name}>
