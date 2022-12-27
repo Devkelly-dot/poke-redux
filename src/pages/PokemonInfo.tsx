@@ -5,7 +5,7 @@ import pokemonTypeStyles  from '../partials/pokemon/pokemonTypeStyles'
 import { update_pokemon } from '../partials/pokemon/allPokemonSlice';
 import info_axios from '../lib/api/pokeinfo_api'
 import { useEffect, useState } from 'react';
-import { PokeType } from "../partials/pokemon/definePokemon";
+import { AbilityType, MoveType, PokeType } from "../partials/pokemon/definePokemon";
 
 export default function PokemonInfo()
 {
@@ -22,6 +22,7 @@ export default function PokemonInfo()
     useEffect(()=>{
         async function fetch_pokeInfo(pokemon:PokeType)
         {
+            console.log("fetching data")
             try{
                 const name = pokemon.name;
                 let request = await info_axios.get(`/pokemon/${name}`);
@@ -29,6 +30,8 @@ export default function PokemonInfo()
                 {
                     throw new Error(`Request failed with status code ${request.status}`);
                 }
+
+                // get the types
                 const fetch_types = request.data.types;
                 let types = []
 
@@ -36,11 +39,55 @@ export default function PokemonInfo()
                 {
                     types.push(fetch_types[i].type.name)
                 }
+                
+                // get the moves
+                const fetch_moves = request.data.moves;
+                let moves = []
+                for(let i in fetch_moves)
+                {
+                    const new_move:MoveType = {
+                        name:fetch_moves[i].move.name,
+                        level:fetch_moves[i].version_group_details[0].level_learned_at,
+                        method:fetch_moves[i].version_group_details[0].move_learn_method.name
+                    }
+                    moves.push(new_move);
+                }
+
+                // get the abilities
+                const fetch_abilities = request.data.abilities;
+                let abilities = []
+                for(let i in fetch_abilities)
+                {
+                    const name = fetch_abilities[i].ability.name;
+                    const fetch_description = await info_axios.get(`/ability/${name}`)
+
+                    let english_index = 0;
+
+                    for(let j in fetch_description.data.effect_entries)
+                    {
+                        if(fetch_description.data.effect_entries[j].language.name === 'en')
+                        {
+                            english_index = parseInt(j);
+                            break;
+                        }
+                    }
+
+                    const description = fetch_description.data.effect_entries[english_index].effect
+
+                    const new_ability:AbilityType = {
+                        name: name,
+                        description:description,
+                    }
+
+                    abilities.push(new_ability);
+                }
 
                 const new_pokemon:PokeType = {
                     name: pokemon.name,
                     sprite:pokemon.sprite,
                     type:types,
+                    move:moves,
+                    ability:abilities,
                     hasFetched:true,
                 }
                 dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
@@ -58,7 +105,7 @@ export default function PokemonInfo()
             if(target_pokemon)
                 fetch_pokeInfo(target_pokemon)
         }
-    },[all_pokemon])
+    },[all_pokemon, myPokemon])
 
     return(
         <>

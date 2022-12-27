@@ -1,13 +1,18 @@
-type AbilityType = {
+export type AbilityType = {
     name: string,
-    description?: string,
-    url?:string,
+    description?: string
 }
 
-type StatType = {
+export type StatType = {
     base_state: number,
     effort: number,
     name: string,
+}
+
+export type MoveType = {
+    name:string,
+    level:number,
+    method:string,
 }
 
 export type PokeType = {
@@ -17,7 +22,7 @@ export type PokeType = {
     ability?:AbilityType[],
     height?:string,
     weight?:string,
-    move?:string[],
+    move?:MoveType[],
     stat?:StatType[],
     hasFetched?:boolean,
 }
