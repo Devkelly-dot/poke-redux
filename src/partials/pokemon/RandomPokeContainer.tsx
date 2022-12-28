@@ -19,7 +19,7 @@ export default function RandomPokeContainer()
     const dispatch = useDispatch()
     const all_pokemon = useSelector((state:RootState)=>state.allPokemon.pokemon);
     const searchParams = new URLSearchParams(window.location.search);
-    const name = searchParams.get('name');
+    const name = searchParams.get('name')?.toLowerCase();
 
     let filteredPokemon:PokeType[]; 
 

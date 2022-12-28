@@ -24,7 +24,7 @@ export default function PokeSearchBar()
         }
 
         const filtered = all_pokemon.filter((pokemon)=>
-        pokemon.name.startsWith(query));
+        pokemon.name.startsWith(query.toLowerCase()));
         setResults(filtered);
     },[query])
     
