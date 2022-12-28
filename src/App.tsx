@@ -101,6 +101,7 @@ export default function App()
     return(
         <Routes>
             <Route index element={<Home/>}/>
+            <Route path="pokemon" element={<Home/>}/>
             <Route path="pokemon/:pokemonName" element={<PokemonInfo/>}/>
         </Routes> 
     )
