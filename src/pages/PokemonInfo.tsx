@@ -3,7 +3,7 @@ import { useSelector, useDispatch, } from 'react-redux';
 import { RootState } from "../app/store";
 import pokemonTypeStyles  from '../partials/pokemon/pokemonTypeStyles'
 import { update_pokemon } from '../partials/pokemon/allPokemonSlice';
-import { add_pokemon as add_to_party } from '../partials/pokemon/partySlice';
+import { add_pokemon as add_to_party, update_pokemon as update_party_pokemon } from '../partials/pokemon/partySlice';
 import info_axios from '../lib/api/pokeinfo_api'
 import { useEffect, useState } from 'react';
 import { AbilityType, MoveType, PokeType } from "../partials/pokemon/definePokemon";
@@ -17,8 +17,24 @@ export default function PokemonInfo()
         displayName = pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1);
 
     const all_pokemon = useSelector((state:RootState)=>state.allPokemon.pokemon);
+    let party_pokemon = useSelector((state:RootState)=>state.party.party);
+    let same_party_pokemon:any = []
 
+    for(let i in party_pokemon)
+    {
+        if(party_pokemon[i].name === pokemonName)
+        {
+            same_party_pokemon.push(
+                {
+                    pokemon: party_pokemon[i],
+                    index: i
+                }
+            );
+        }
+    }
+    
     const [myPokemon,setMyPokemon] = useState<PokeType>()
+    const [SelectedPartyPokemon,setSelectedPartyPokemon] = useState(same_party_pokemon[0]||null) // the pokemon in our party that we add moves or abilities to
     const [selectedMove,setSelectedMove] = useState({name:'',desc:''})
     const [selectedAbility,setSelectedAbility] = useState({name:'',desc:''})
 
@@ -145,7 +161,28 @@ export default function PokemonInfo()
         dispatch(add_to_party(pokemon))
         return true; 
     }
+    
+    function change_party_poke_ability(party_pokemon:any)
+    {
+        if(!pokemonName)
+            return false;
 
+        const cloning_from = all_pokemon.find(pokemon=>pokemon.name===pokemonName)
+        if(cloning_from === undefined)
+            return false;
+        
+        const new_ability:AbilityType = {
+            name:selectedAbility.name,
+            description:selectedAbility.desc,
+        } 
+
+        const cloned_pokemon = {...cloning_from, selectedAbility:new_ability}
+        const action = {
+            index: parseInt(party_pokemon.index),
+            pokemon:cloned_pokemon
+        };
+        dispatch(update_party_pokemon(action));
+    };
 
     return(
         <div>
@@ -191,6 +228,14 @@ export default function PokemonInfo()
                         <div>
                             <h3 className='text-center h-8 bg-blue-50'>{selectedAbility.name}</h3>
                             <div>{selectedAbility.desc}</div>
+                            <select>
+                                {same_party_pokemon.map((pokemon:any,index:number)=>(
+                                    <option key={`selector:${index}`} value={`${pokemon.pokemon.name} ${index}`}>
+                                        {pokemon.pokemon.name} {index+1}
+                                    </option>
+                                ))}
+                            </select>
+                            <button onClick={()=>change_party_poke_ability(same_party_pokemon[0])}>Use This Ability</button>
                         </div>
                     </div>
                     <div className='grid grid-cols-2'>

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch, } from 'react-redux';
-import { add_pokemon as add_to_all, update_pokemon } from './partials/pokemon/allPokemonSlice';
+import { add_pokemon as add_to_all } from './partials/pokemon/allPokemonSlice';
 
 import info_axios from './lib/api/pokeinfo_api'
 import { RootState } from "./app/store";
 import { PokeType } from "./partials/pokemon/definePokemon";
 
 import './index.css';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 import Home from './pages/Home';
 import PokemonInfo from './pages/PokemonInfo';
+import PartyPokemonInfo from './pages/PartyPokemonInfo';
 
 export default function App()
 {
@@ -103,6 +104,7 @@ export default function App()
             <Route index element={<Home/>}/>
             <Route path="pokemon" element={<Home/>}/>
             <Route path="pokemon/:pokemonName" element={<PokemonInfo/>}/>
+            <Route path="party/:index" element={<PartyPokemonInfo/>}/>
         </Routes> 
     )
 }

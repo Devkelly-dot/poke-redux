@@ -15,7 +15,7 @@ export type MoveType = {
     method:string,
 }
 
-export type PokeType = {
+export type PokeType = { //pokemon that are in the all_pokemon state
     name: string,
     sprite?: string,
     type?: string[],
@@ -25,4 +25,6 @@ export type PokeType = {
     move?:MoveType[],
     stat?:StatType[],
     hasFetched?:boolean,
+    selectedAbility?:AbilityType,
+    selectedMoves?:MoveType[],
 }
