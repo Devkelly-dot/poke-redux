@@ -18,25 +18,18 @@ export default function PokemonInfo()
 
     const all_pokemon = useSelector((state:RootState)=>state.allPokemon.pokemon);
     let party_pokemon = useSelector((state:RootState)=>state.party.party);
-    let same_party_pokemon:any = []
 
-    for(let i in party_pokemon)
-    {
-        if(party_pokemon[i].name === pokemonName)
-        {
-            same_party_pokemon.push(
-                {
-                    pokemon: party_pokemon[i],
-                    index: i
-                }
-            );
-        }
-    }
     
     const [myPokemon,setMyPokemon] = useState<PokeType>()
-    const [SelectedPartyPokemon,setSelectedPartyPokemon] = useState(same_party_pokemon[0]||null) // the pokemon in our party that we add moves or abilities to
+    const [SelectedPartyPokemon,setSelectedPartyPokemon] = useState(
+        {
+            pokemon: null as PokeType | null,
+            index: 0
+        }
+        ) // the pokemon in our party that we add moves or abilities to
     const [selectedMove,setSelectedMove] = useState({name:'',desc:''})
     const [selectedAbility,setSelectedAbility] = useState({name:'',desc:''})
+    const [same_party_pokemon,setSamePartyPokemon] = useState<{pokemon:PokeType, index:number}[]>([])
 
     useEffect(()=>{
         async function fetch_pokeInfo(pokemon:PokeType)
@@ -183,6 +176,42 @@ export default function PokemonInfo()
         };
         dispatch(update_party_pokemon(action));
     };
+    
+    
+    useEffect(()=>{
+        let new_party_pokemon = []
+
+        for(let i in party_pokemon)
+        {
+            if(party_pokemon[i].name === pokemonName)
+            {
+                new_party_pokemon.push(
+                    {
+                        pokemon: party_pokemon[i],
+                        index: parseInt(i)
+                    }
+                );
+            }
+        }
+
+        setSamePartyPokemon(new_party_pokemon)
+        setSelectedPartyPokemon(new_party_pokemon[0])
+    },[party_pokemon.length])
+
+    function changeSelectedPartyPokemon(e:any)
+    {
+        let name = e.target.value.split(' ');
+        let index = parseInt(name[name.length-1]);
+
+        for(let i in same_party_pokemon)
+        {
+            if(same_party_pokemon[i].index === index)
+            {
+                setSelectedPartyPokemon(same_party_pokemon[i])
+                return true;
+            }
+        }
+    }
 
     return(
         <div>
@@ -207,7 +236,22 @@ export default function PokemonInfo()
                             onClick={()=>{add_pokemon_to_party(myPokemon)}}
                         >Add to party</button>
                     </div>
-
+                    
+                    <div className='bg-blue-50 text-center'>
+                    <div className=' font-semibold'>Select A {myPokemon.name} From Your Party</div>
+                        {
+                            same_party_pokemon.length>0?<select className=' w-full'
+                                onChange={(e)=>changeSelectedPartyPokemon(e)}
+                            >
+                                {same_party_pokemon.map((pokemon:any,index:number)=>(
+                                    <option key={`selector:${index}`} value={`${pokemon.pokemon.name} ${index}`}>
+                                        {pokemon.pokemon.name} {index+1}
+                                    </option>
+                                ))}
+                            </select>:<></>
+                        }
+                        <hr></hr>
+                    </div>
 
                     <div className='grid grid-cols-2'>
                         <div>
@@ -228,14 +272,12 @@ export default function PokemonInfo()
                         <div>
                             <h3 className='text-center h-8 bg-blue-50'>{selectedAbility.name}</h3>
                             <div>{selectedAbility.desc}</div>
-                            <select>
-                                {same_party_pokemon.map((pokemon:any,index:number)=>(
-                                    <option key={`selector:${index}`} value={`${pokemon.pokemon.name} ${index}`}>
-                                        {pokemon.pokemon.name} {index+1}
-                                    </option>
-                                ))}
-                            </select>
-                            <button onClick={()=>change_party_poke_ability(same_party_pokemon[0])}>Use This Ability</button>
+                            {
+                                same_party_pokemon.length>0&&selectedAbility.name!==''?<div>
+                                    <button onClick={()=>change_party_poke_ability(same_party_pokemon[SelectedPartyPokemon.index])} className='font-semibold'>Use This Ability On Selected Pokemon</button>
+                                </div>:<></>
+                            }
+                            
                         </div>
                     </div>
                     <div className='grid grid-cols-2'>
