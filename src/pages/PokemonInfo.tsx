@@ -194,6 +194,16 @@ export default function PokemonInfo()
         if(cloning_from === undefined)
             return false;
         
+        if(SelectedPartyPokemon?.pokemon?.selectedMoves)
+        {
+            for(let i in SelectedPartyPokemon?.pokemon?.selectedMoves)
+            {
+                let move = SelectedPartyPokemon?.pokemon?.selectedMoves[i]
+                if(move.name === selectedMove.name)
+                    return false;
+            }
+        }
+        
         const new_move:MoveType = {
             name:selectedMove.name,
             description:selectedMove.desc,
