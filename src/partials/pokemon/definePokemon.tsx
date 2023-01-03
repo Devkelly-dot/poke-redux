@@ -11,8 +11,9 @@ export type StatType = {
 
 export type MoveType = {
     name:string,
-    level:number,
-    method:string,
+    description?: string,
+    level?:number,
+    method?:string,
 }
 
 export type PokeType = { //pokemon that are in the all_pokemon state

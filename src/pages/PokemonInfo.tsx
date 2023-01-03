@@ -30,6 +30,7 @@ export default function PokemonInfo()
     const [selectedMove,setSelectedMove] = useState({name:'',desc:''})
     const [selectedAbility,setSelectedAbility] = useState({name:'',desc:''})
     const [same_party_pokemon,setSamePartyPokemon] = useState<{pokemon:PokeType, index:number}[]>([])
+    const [partyPokemonMoves,setPartyPokemonMoves] = useState<MoveType[]>([])
 
     useEffect(()=>{
         async function fetch_pokeInfo(pokemon:PokeType)
@@ -160,7 +161,11 @@ export default function PokemonInfo()
         if(!pokemonName)
             return false;
 
-        const cloning_from = all_pokemon.find(pokemon=>pokemon.name===pokemonName)
+        if(SelectedPartyPokemon.pokemon === null)
+            return false;
+
+        const cloning_from = SelectedPartyPokemon.pokemon;
+
         if(cloning_from === undefined)
             return false;
         
@@ -177,7 +182,46 @@ export default function PokemonInfo()
         dispatch(update_party_pokemon(action));
     };
     
-    
+    function change_party_poke_move(party_pokemon:any)
+    {
+        if(!pokemonName)
+            return false;
+
+        if(SelectedPartyPokemon.pokemon === null)
+            return false;
+
+        const cloning_from = SelectedPartyPokemon.pokemon;
+        if(cloning_from === undefined)
+            return false;
+        
+        const new_move:MoveType = {
+            name:selectedMove.name,
+            description:selectedMove.desc,
+        } 
+
+        let old_moves = SelectedPartyPokemon?.pokemon.selectedMoves;
+        if(old_moves && old_moves?.length > 3)
+            return false;
+        
+        if(typeof old_moves === "undefined")
+            old_moves = []
+        
+        old_moves = [...old_moves,new_move]
+
+        const cloned_pokemon = {...cloning_from, selectedMoves:old_moves}
+        const action = {
+            index: parseInt(party_pokemon.index),
+            pokemon:cloned_pokemon
+        };
+        setSelectedPartyPokemon(
+            {
+                pokemon:cloned_pokemon,
+                index:SelectedPartyPokemon.index
+            });
+        setPartyPokemonMoves(old_moves);
+        dispatch(update_party_pokemon(action));
+    };
+
     useEffect(()=>{
         let new_party_pokemon = []
 
@@ -196,6 +240,11 @@ export default function PokemonInfo()
 
         setSamePartyPokemon(new_party_pokemon)
         setSelectedPartyPokemon(new_party_pokemon[0])
+        if(new_party_pokemon[0])
+        {
+            let moves = new_party_pokemon[0].pokemon.selectedMoves || []
+            setPartyPokemonMoves(moves)
+        }
     },[party_pokemon.length])
 
     function changeSelectedPartyPokemon(e:any)
@@ -203,7 +252,24 @@ export default function PokemonInfo()
         let name = e.target.value.split(' ');
         let index = parseInt(name[name.length-1]);
         setSelectedPartyPokemon(same_party_pokemon[index])
+        let moves = same_party_pokemon[index].pokemon.selectedMoves || []
+        setPartyPokemonMoves(moves)
     }
+
+    useEffect(()=>{
+        if(SelectedPartyPokemon)
+        {
+            let index = SelectedPartyPokemon.index;
+            let pokemon = party_pokemon[index]
+            if(!pokemon?.selectedMoves)
+            {
+                setPartyPokemonMoves([])
+                return;
+            }
+            
+            setPartyPokemonMoves(pokemon?.selectedMoves)
+        }
+    },[SelectedPartyPokemon, party_pokemon])
 
     return(
         <div>
@@ -280,7 +346,10 @@ export default function PokemonInfo()
                                 myPokemon.move?.map((move)=>
                                     <li 
                                         onClick={()=>{selectedMove.name===move.name?setSelectedMove({name:'',desc:''}):setSelectedMove({name:move.name,desc:''})}} 
-                                        className={`${selectedMove.name===move.name?"bg-blue-50":""} cursor-pointer`}
+                                        className={
+                                            `${selectedMove.name===move.name?"bg-blue-50":""} 
+                                            ${partyPokemonMoves.some(partyMove => move.name === partyMove.name) ? "bg-red-200" : ""}
+                                            cursor-pointer` }
                                         key={move.name}>
                                             {move.name}
                                         </li>
@@ -290,7 +359,12 @@ export default function PokemonInfo()
                         </div>
                         <div>
                             <h3 className='text-center h-8 bg-blue-50'>{selectedMove.name}</h3>
-                            <div>{selectedMove.desc}</div>
+                            <div className='mb-2'>{selectedMove.desc}</div>
+                            {
+                                same_party_pokemon.length>0&&selectedMove.name!==''?<div>
+                                    <button onClick={()=>change_party_poke_move(SelectedPartyPokemon)} className='font-semibold'>Add This Move To Selected Pokemon</button>
+                                </div>:<></>
+                            }
                         </div>
                     </div>
 
