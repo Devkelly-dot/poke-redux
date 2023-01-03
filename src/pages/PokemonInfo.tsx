@@ -202,15 +202,7 @@ export default function PokemonInfo()
     {
         let name = e.target.value.split(' ');
         let index = parseInt(name[name.length-1]);
-
-        for(let i in same_party_pokemon)
-        {
-            if(same_party_pokemon[i].index === index)
-            {
-                setSelectedPartyPokemon(same_party_pokemon[i])
-                return true;
-            }
-        }
+        setSelectedPartyPokemon(same_party_pokemon[index])
     }
 
     return(
@@ -274,7 +266,7 @@ export default function PokemonInfo()
                             <div>{selectedAbility.desc}</div>
                             {
                                 same_party_pokemon.length>0&&selectedAbility.name!==''?<div>
-                                    <button onClick={()=>change_party_poke_ability(same_party_pokemon[SelectedPartyPokemon.index])} className='font-semibold'>Use This Ability On Selected Pokemon</button>
+                                    <button onClick={()=>change_party_poke_ability(SelectedPartyPokemon)} className='font-semibold'>Use This Ability On Selected Pokemon</button>
                                 </div>:<></>
                             }
                             
