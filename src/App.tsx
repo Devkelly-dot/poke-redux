@@ -14,13 +14,6 @@ import PartyPokemonInfo from './pages/PartyPokemonInfo';
 
 import { add_nature } from './partials/pokemon/miscSlice';
 
-type NatureType = {
-    id: number;
-    name: string;
-    decreased_stat: string | null;
-    increased_stat: string | null;
-}
-
 export default function App()
 {
     const [localAllPokemon,setLocalAllPokemon] = useState<PokeType[]>([])
@@ -104,6 +97,8 @@ export default function App()
 
                 nature['name'] = current_nature.name;
                 nature['id'] = id;
+                nature['index'] = i;
+                
                 let details = await info_axios.get(`/nature/${id}`);
                 if(details.data.increased_stat===null)
                     nature['increased_stat'] = details.data.increased_stat;  

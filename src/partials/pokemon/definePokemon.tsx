@@ -16,6 +16,14 @@ export type MoveType = {
     method?:string,
 }
 
+export type NatureType = {
+    id: number;
+    name: string;
+    decreased_stat: string | null;
+    increased_stat: string | null;
+    index:number;
+}
+
 export type PokeType = { //pokemon that are in the all_pokemon state
     name: string,
     sprite?: string,
@@ -28,4 +36,5 @@ export type PokeType = { //pokemon that are in the all_pokemon state
     hasFetched?:boolean,
     selectedAbility?:AbilityType,
     selectedMoves?:MoveType[],
+    selectedNature?:NatureType,
 }

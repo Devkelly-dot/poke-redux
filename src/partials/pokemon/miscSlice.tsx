@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-type NatureType = {
-    id: number;
-    name: string;
-    decreased_stat: string | null;
-    increased_stat: string | null;
-}
+import { NatureType } from "./definePokemon";
 
 export interface miscState {
     natures: NatureType[]

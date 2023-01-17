@@ -4,23 +4,18 @@ import { RootState } from "../app/store";
 import { PokeType } from '../partials/pokemon/definePokemon';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-
-type NatureType = {
-    id: number;
-    name: string;
-    decreased_stat: string | null;
-    increased_stat: string | null;
-}
+import { update_pokemon } from '../partials/pokemon/partySlice';
 
 export default function PartyPokemonInfo()
 {
+    const dispatch = useDispatch();
+
     const party = useSelector((state:RootState)=>state.party.party);
     const natures = useSelector((state:RootState)=>state.misc.natures);
 
     const [myPokemon, setMyPokemon] = useState<PokeType>();
     const [selectedNature,setSelectedNature] = useState(natures[0]);
-
+    
     const {index}=useParams();
 
     useEffect(()=>{
@@ -31,11 +26,26 @@ export default function PartyPokemonInfo()
         else return;
 
         setMyPokemon(pokemon);
+        if(pokemon && pokemon.selectedNature)
+            setSelectedNature(pokemon.selectedNature)
     },[index, party])
 
     function handleNatureChange(e:any)
     {
-        setSelectedNature(natures[e.target.value])
+        const new_nature = natures[e.target.value]
+        setSelectedNature(new_nature)
+        
+        if (typeof index === "string" && !isNaN(+index) && +index >= 0 && +index < party.length)
+        {
+            const cloning_from = party[Number(index)];
+            const cloned_pokemon = {...cloning_from, selectedNature:new_nature}
+            const action = {
+                index: parseInt(index),
+                pokemon:cloned_pokemon
+            };
+
+            dispatch(update_pokemon(action))
+        } 
     }
     
     return(
@@ -75,9 +85,10 @@ export default function PartyPokemonInfo()
 
                     <div>
                         <h2 className='font-semibold'>Nature</h2>
-                        <select onChange={handleNatureChange}>
+                        <div>{selectedNature.name}</div>
+                        <select onChange={handleNatureChange} defaultValue={selectedNature.index}>
                             {natures.map((nature,indx)=>
-                                <option key={nature.name} value={indx}>{nature.name} &#40;
+                                <option key={nature.name} value={nature.index}>{nature.name} &#40;
                                     {nature.increased_stat&&`+${nature.increased_stat}`} / 
                                     {nature.decreased_stat&&`-${nature.decreased_stat}`}&#41;
                                 </option>
