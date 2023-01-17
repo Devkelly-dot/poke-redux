@@ -12,6 +12,15 @@ import Home from './pages/Home';
 import PokemonInfo from './pages/PokemonInfo';
 import PartyPokemonInfo from './pages/PartyPokemonInfo';
 
+import { add_nature } from './partials/pokemon/miscSlice';
+
+type NatureType = {
+    id: number;
+    name: string;
+    decreased_stat: string | null;
+    increased_stat: string | null;
+}
+
 export default function App()
 {
     const [localAllPokemon,setLocalAllPokemon] = useState<PokeType[]>([])
@@ -83,6 +92,33 @@ export default function App()
             return local_all_pokemon;
         }
 
+        async function fetchNatures() {
+            let request = await info_axios.get('/nature')
+            let all_natures = [];
+            
+            for(let i in request.data.results)
+            {
+                let nature:any = {};
+                let current_nature = request.data.results[i];
+                const id = current_nature.url.match(/nature\/(\d+)\/$/)[1];
+
+                nature['name'] = current_nature.name;
+                nature['id'] = id;
+                let details = await info_axios.get(`/nature/${id}`);
+                if(details.data.increased_stat===null)
+                    nature['increased_stat'] = details.data.increased_stat;  
+                else 
+                    nature['increased_stat'] = details.data.increased_stat.name;  
+
+                if(details.data.decreased_stat===null)
+                    nature['decreased_stat'] = details.data.decreased_stat;  
+                else 
+                    nature['decreased_stat'] = details.data.decreased_stat.name;  
+                
+                dispatch(add_nature(nature));
+            }
+        }
+
         async function initial_setup()
         {
             if(all_pokemon.length < 1)
@@ -94,6 +130,8 @@ export default function App()
             {
                 setLocalAllPokemon(all_pokemon);
             }
+
+            fetchNatures();
         }
 
         initial_setup();

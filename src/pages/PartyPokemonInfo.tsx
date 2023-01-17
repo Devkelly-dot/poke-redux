@@ -5,11 +5,23 @@ import { PokeType } from '../partials/pokemon/definePokemon';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+
+type NatureType = {
+    id: number;
+    name: string;
+    decreased_stat: string | null;
+    increased_stat: string | null;
+}
+
 export default function PartyPokemonInfo()
 {
-    const [myPokemon, setMyPokemon] = useState<PokeType>()
-    const {index}=useParams()
     const party = useSelector((state:RootState)=>state.party.party);
+    const natures = useSelector((state:RootState)=>state.misc.natures);
+
+    const [myPokemon, setMyPokemon] = useState<PokeType>();
+    const [selectedNature,setSelectedNature] = useState(natures[0]);
+
+    const {index}=useParams();
 
     useEffect(()=>{
         let pokemon;
@@ -21,6 +33,11 @@ export default function PartyPokemonInfo()
         setMyPokemon(pokemon);
     },[index, party])
 
+    function handleNatureChange(e:any)
+    {
+        setSelectedNature(natures[e.target.value])
+    }
+    
     return(
         <div>
             {
@@ -54,6 +71,18 @@ export default function PartyPokemonInfo()
                                 }
                             </div>
                         </div>
+                    </div>
+
+                    <div>
+                        <h2 className='font-semibold'>Nature</h2>
+                        <select onChange={handleNatureChange}>
+                            {natures.map((nature,indx)=>
+                                <option key={nature.name} value={indx}>{nature.name} &#40;
+                                    {nature.increased_stat&&`+${nature.increased_stat}`} / 
+                                    {nature.decreased_stat&&`-${nature.decreased_stat}`}&#41;
+                                </option>
+                            )}
+                        </select>
                     </div>
                 </div>:<div>No Pokemon Here</div>
             }
