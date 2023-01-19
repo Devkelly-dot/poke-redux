@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { update_pokemon } from '../partials/pokemon/partySlice';
 import PokeMoveContainer from '../partials/moves/PokeMoveContainer';
+import 'chart.js/auto';
+import { Chart } from 'react-chartjs-2';
 
 export default function PartyPokemonInfo()
 {
@@ -28,7 +30,7 @@ export default function PartyPokemonInfo()
 
         setMyPokemon(pokemon);
         if(pokemon && pokemon.selectedNature)
-            setSelectedNature(pokemon.selectedNature)
+            setSelectedNature(pokemon.selectedNature);
     },[index, party])
 
     function handleNatureChange(e:any)
@@ -49,6 +51,50 @@ export default function PartyPokemonInfo()
         } 
     }
     
+    const data = {
+        labels: [
+            'HP',
+            'Attack',
+            'Defense',
+            'Special Attack',
+            'Special Defense',
+            'Speed'
+        ],
+        datasets: [{
+            label: 'Base Stats',
+            data: [45, 49, 49, 65, 65, 45],
+            fill: true,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgb(255, 99, 132)',
+            pointBackgroundColor: 'rgb(255, 99, 132)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(255, 99, 132)'
+        }, {
+            label: 'With EVs',
+            data: [45, 49, 49, 128, 128, 45],
+            fill: true,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgb(54, 162, 235)',
+            pointBackgroundColor: 'rgb(54, 162, 235)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(54, 162, 235)'
+        }]
+    };
+
+    const config = {
+        type: 'radar',
+        data: data,
+        options: {
+          elements: {
+            line: {
+              borderWidth: 3
+            }
+          }
+        },
+      };
+
     return(
         <div className=' px-12'>
             {
@@ -76,7 +122,7 @@ export default function PartyPokemonInfo()
                         </div>
                     </div>
 
-                    <div>
+                    <div className='grid grid-cols-1'>
                         <h2 className='font-semibold'>Nature</h2>
                         <div>{selectedNature.name}</div>
                         <select onChange={handleNatureChange} defaultValue={selectedNature.index}>
@@ -87,6 +133,20 @@ export default function PartyPokemonInfo()
                                 </option>
                             )}
                         </select>
+                    </div>
+
+                    <div className='grid grid-cols-1 my-4'>
+                        <h2 className='font-semibold'>EV Planner</h2>
+                        {
+                            myPokemon.stat?.map((stat,indx)=>{
+                                return <div key={`evPlanner:${stat.name}`}>
+                                    {stat.name}
+                                </div>
+                            })
+                        }
+                    </div>
+                    <div className='grid grid-cols-1'>
+                        <Chart type='radar' data={data}/>
                     </div>
                 </div>:<div>No Pokemon Here</div>
             }

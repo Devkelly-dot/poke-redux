@@ -18,7 +18,7 @@ export default function PokeMoveContainer({moves}:Props)
                     selectedMove===null?<div className='grid sm:grid-cols-1 md:grid-cols-2'>
                     {
                         [0,1,2,3].map((indx)=>
-                            <div>
+                            <div key={`moves${moves[indx]&&moves[indx].name}${indx}`}>
                                 {
                                     moves[indx]?
                                     <div 
@@ -42,7 +42,7 @@ export default function PokeMoveContainer({moves}:Props)
                 <div className="grid sm:grid-cols-1 grid-cols-2">
                     {
                         [0,1,2,3].map((indx)=>
-                            <div className="font-bold mb-4 lg:mb-0">-</div>
+                            <div key={`nullmoves${indx}`} className="font-bold mb-4 lg:mb-0">-</div>
                         )
                     }
                 </div>

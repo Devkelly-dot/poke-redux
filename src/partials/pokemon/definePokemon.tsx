@@ -4,8 +4,8 @@ export type AbilityType = {
 }
 
 export type StatType = {
-    base_state: number,
-    effort: number,
+    base_stat: number,
+    effort_value: number,
     name: string,
 }
 

@@ -3,7 +3,7 @@ import { useSelector, useDispatch, } from 'react-redux';
 import { add_pokemon as add_to_all, update_pokemon } from './allPokemonSlice';
 import info_axios from '../../lib/api/pokeinfo_api'
 import { RootState } from "../../app/store";
-import { PokeType } from "./definePokemon";
+import { PokeType, StatType } from "./definePokemon";
 import DisplayPokeBox from './DisplayPokebox';
 import { useLocation } from 'react-router-dom';
 
@@ -82,10 +82,30 @@ export default function RandomPokeContainer()
                     types.push(fetch_types[i].type.name)
                 }
 
+                let stats:StatType[] = []
+                const pokemon = request.data;
+
+                for(let i in pokemon.stats)
+                {
+                    let current_stat = pokemon.stats[i];
+
+                    let push_stat:StatType = {
+                        base_stat:0,
+                        effort_value:0,
+                        name:"none"
+                    };
+
+                    push_stat.base_stat = current_stat.base_stat;
+                    push_stat.name = current_stat.stat.name;
+
+                    stats.push(push_stat);
+                }
+
                 const new_pokemon:PokeType = {
                     name: target_pokemon.name,
                     sprite:pokemon_array[i].sprite,
                     type:types,
+                    stat:stats,
                 }
 
                 pokemon_array[i] = new_pokemon;

@@ -4,7 +4,7 @@ import { add_pokemon as add_to_all } from './partials/pokemon/allPokemonSlice';
 
 import info_axios from './lib/api/pokeinfo_api'
 import { RootState } from "./app/store";
-import { PokeType } from "./partials/pokemon/definePokemon";
+import { PokeType, StatType } from "./partials/pokemon/definePokemon";
 
 import './index.css';
 import {Routes, Route} from 'react-router-dom';
@@ -87,7 +87,6 @@ export default function App()
 
         async function fetchNatures() {
             let request = await info_axios.get('/nature')
-            let all_natures = [];
             
             for(let i in request.data.results)
             {
