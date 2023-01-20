@@ -36,7 +36,7 @@ export default function PartyPokemonInfo()
             ],
             datasets: [{
                 label: 'Base Stats',
-                data: [0, 0, 0, 0, 0, 0],
+                data: [1, 1, 1, 1, 1, 1],
                 fill: true,
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgb(255, 99, 132)',
@@ -46,7 +46,7 @@ export default function PartyPokemonInfo()
                 pointHoverBorderColor: 'rgb(255, 99, 132)'
             }, {
                 label: 'With EV Bonuses',
-                data: [0, 0, 0, 0, 0, 0],
+                data: [1, 1, 1, 1, 1, 1],
                 fill: true,
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgb(54, 162, 235)',
