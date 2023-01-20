@@ -321,7 +321,7 @@ export default function PartyPokemonInfo()
                             }
                             </div>
                         </div>
-                        <div className='w-full'>
+                        <div className='sm:w-11/12 md:w-full'>
                             <Chart type='radar' data={graphData}/>
                         </div>
                     </div>
