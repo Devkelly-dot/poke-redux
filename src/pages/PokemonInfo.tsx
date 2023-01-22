@@ -8,6 +8,7 @@ import info_axios from '../lib/api/pokeinfo_api'
 import { useEffect, useState } from 'react';
 import { AbilityType, MoveType, PokeType } from "../partials/pokemon/definePokemon";
 import { Chart } from 'react-chartjs-2';
+import { getTypeChart } from '../lib/getWeaknesses';
 
 export default function PokemonInfo()
 {
@@ -36,6 +37,17 @@ export default function PokemonInfo()
     const [showAbilities, setShowAbilities] = useState(false);
     const [showMoves,setShowMoves] = useState(false);
     const [showStats, setShowStats] = useState(false);
+    const [showResistances, setShowResistances] = useState(false);
+
+    const [resistances,setResistances] = useState(
+        {
+            "weak":[],
+            "super_weak":[],
+            "resistant":[],
+            "super_resistant":[],
+            "immune":[]
+        }
+    )
 
     const [statGraphData,setStatGraphData] = useState(
         {
@@ -126,19 +138,20 @@ export default function PokemonInfo()
                     abilities.push(new_ability);
                 }
 
-                const new_pokemon:PokeType = {
-                    name: pokemon.name,
-                    sprite:pokemon.sprite,
-                    type:types,
-                    move:moves,
-                    ability:abilities,
-                    hasFetched:true,
-                }
                 const stats = request.data.stats;
+                let poke_stats = [];
+
                 let data = [];
                 for(let i in stats)
                 {
                     data.push(stats[i].base_stat);
+                    poke_stats.push(
+                        {
+                            base_stat: stats[i].base_stat,
+                            effort_value: 0,
+                            name: stats[i].stat.name
+                        }
+                    )
                 }
 
                 let dataSet = {...statGraphData.datasets[0], data:data};
@@ -148,9 +161,34 @@ export default function PokemonInfo()
 
                 setStatGraphData(graphData);
 
+                const new_pokemon:PokeType = {
+                    name: pokemon.name,
+                    sprite:pokemon.sprite,
+                    type:types,
+                    move:moves,
+                    ability:abilities,
+                    hasFetched:true,
+                    stat:poke_stats,
+                }
+
                 dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
                 setMyPokemon(new_pokemon);
-                
+                let typeChart = getTypeChart(types);
+                let new_resistances = {
+                    "weak":[],
+                    "super_weak":[],
+                    "resistant":[],
+                    "super_resistant":[],
+                    "immune":[]
+                }
+
+                new_resistances.weak = typeChart.weaknesses;
+                new_resistances.super_weak = typeChart.super_weaknesses;
+                new_resistances.resistant = typeChart.strengths;
+                new_resistances.super_resistant = typeChart.super_strengths;
+                new_resistances.immune = typeChart.immunes;
+
+                setResistances(new_resistances);
             } catch (error) {
                 console.error(error);
             }
@@ -163,7 +201,49 @@ export default function PokemonInfo()
             if(target_pokemon)
                 fetch_pokeInfo(target_pokemon)
         }
-    },[all_pokemon, myPokemon, statGraphData])
+        else if(target_pokemon)
+        {
+            const stats = target_pokemon.stat;
+            if(stats!== undefined)
+            {
+                let data = [];
+
+                for(let i in stats)
+                {
+                    data.push(stats[i].base_stat);
+                }
+
+                let dataSet = {...statGraphData.datasets[0], data:data};
+                let dataSets = [];
+                dataSets.push(dataSet);
+                let graphData = {...statGraphData, datasets:dataSets}
+
+                setStatGraphData(graphData);
+            }
+
+            const types = target_pokemon.type;
+
+            if(types !== undefined)
+            {
+                let typeChart = getTypeChart(types);
+                let new_resistances = {
+                    "weak":[],
+                    "super_weak":[],
+                    "resistant":[],
+                    "super_resistant":[],
+                    "immune":[]
+                }
+
+                new_resistances.weak = typeChart.weaknesses;
+                new_resistances.super_weak = typeChart.super_weaknesses;
+                new_resistances.resistant = typeChart.strengths;
+                new_resistances.super_resistant = typeChart.super_strengths;
+                new_resistances.immune = typeChart.immunes;
+
+                setResistances(new_resistances);
+            }
+        }
+    },[all_pokemon, myPokemon])
 
 
     useEffect(()=>{
@@ -368,6 +448,102 @@ export default function PokemonInfo()
                         }
                         <hr></hr>
                     </div>
+
+                    {
+                        showResistances?<div>
+                            <button 
+                                onClick={()=>{setShowResistances(false)}} 
+                                className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
+                                    Hide Resistances
+                            </button>
+                            <div>
+                            {
+                                resistances.weak.length>0?<div className='flex flex-col gap-3 mb-4'>
+                                    <h3 className='text-lg font-semibold'>Weak To:</h3>
+                                    <div className='flex gap-4'>
+                                    {
+                                        resistances.weak.map((type,index)=>{
+                                            return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`weak${type}`}>
+                                                {type}
+                                            </div>
+                                        })
+                                    }
+                                    </div>
+                                </div>:<></>
+                            }
+                            </div>
+                            <div>
+                            {
+                                resistances.super_weak.length>0?<div className='flex flex-col gap-3 mb-4'>
+                                <h3 className='text-lg font-semibold'>Super Weak To:</h3>
+                                <div className='flex gap-4'>
+                                {
+                                    resistances.super_weak.map((type,index)=>{
+                                        return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`super_weak${type}`}>
+                                            {type}
+                                        </div>
+                                    })
+                                }
+                                </div>
+                            </div>:<></>
+                            }
+                            </div>
+                            <div>
+                            {
+                                resistances.resistant.length>0?<div className='flex flex-col gap-3 mb-4'>
+                                <h3 className='text-lg font-semibold'>Resistant To:</h3>
+                                <div className='flex gap-4'>
+                                {
+                                    resistances.resistant.map((type,index)=>{
+                                        return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`resist${type}`}>
+                                            {type}
+                                        </div>
+                                    })
+                                }
+                                </div>
+                            </div>:<></>
+                            }
+                            </div>
+
+                            <div>
+                            {
+                                resistances.super_resistant.length>0?<div className='flex flex-col gap-3 mb-4'>
+                                <h3 className='text-lg font-semibold'>Super Resistant To:</h3>
+                                <div className='flex gap-4'>
+                                {
+                                    resistances.super_resistant.map((type,index)=>{
+                                        return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`super_resist${type}`}>
+                                            {type}
+                                        </div>
+                                    })
+                                }
+                                </div>
+                            </div>:<></>
+                            }
+                            </div>
+
+                            <div>
+                            {
+                                resistances.immune.length>0?<div className='flex flex-col gap-3 mb-4'>
+                                <h3 className='text-lg font-semibold'>Immune To:</h3>
+                                <div className='flex gap-4'>
+                                {
+                                    resistances.immune.map((type,index)=>{
+                                        return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`immune${type}`}>
+                                            {type}
+                                        </div>
+                                    })
+                                }
+                                </div>
+                            </div>:<></>
+                            }
+                            </div>
+                        </div>:<button 
+                            onClick={()=>{setShowResistances(true);}} 
+                            className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
+                                Show Resistances
+                        </button>
+                    }
 
                     {showAbilities?<div>
                         <button 
