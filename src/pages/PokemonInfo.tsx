@@ -460,7 +460,7 @@ export default function PokemonInfo()
                             {
                                 resistances.weak.length>0?<div className='flex flex-col gap-3 mb-4'>
                                     <h3 className='text-lg font-semibold'>Weak To:</h3>
-                                    <div className='flex gap-4'>
+                                    <div className='flex gap-4 flex-wrap'>
                                     {
                                         resistances.weak.map((type,index)=>{
                                             return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`weak${type}`}>
@@ -476,7 +476,7 @@ export default function PokemonInfo()
                             {
                                 resistances.super_weak.length>0?<div className='flex flex-col gap-3 mb-4'>
                                 <h3 className='text-lg font-semibold'>Super Weak To:</h3>
-                                <div className='flex gap-4'>
+                                <div className='flex gap-4 flex-wrap'>
                                 {
                                     resistances.super_weak.map((type,index)=>{
                                         return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`super_weak${type}`}>
@@ -492,7 +492,7 @@ export default function PokemonInfo()
                             {
                                 resistances.resistant.length>0?<div className='flex flex-col gap-3 mb-4'>
                                 <h3 className='text-lg font-semibold'>Resistant To:</h3>
-                                <div className='flex gap-4'>
+                                <div className='flex gap-4 flex-wrap'>
                                 {
                                     resistances.resistant.map((type,index)=>{
                                         return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`resist${type}`}>
@@ -509,7 +509,7 @@ export default function PokemonInfo()
                             {
                                 resistances.super_resistant.length>0?<div className='flex flex-col gap-3 mb-4'>
                                 <h3 className='text-lg font-semibold'>Super Resistant To:</h3>
-                                <div className='flex gap-4'>
+                                <div className='flex gap-4 flex-wrap'>
                                 {
                                     resistances.super_resistant.map((type,index)=>{
                                         return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`super_resist${type}`}>
@@ -526,7 +526,7 @@ export default function PokemonInfo()
                             {
                                 resistances.immune.length>0?<div className='flex flex-col gap-3 mb-4'>
                                 <h3 className='text-lg font-semibold'>Immune To:</h3>
-                                <div className='flex gap-4'>
+                                <div className='flex gap-4 flex-wrap'>
                                 {
                                     resistances.immune.map((type,index)=>{
                                         return <div className={`${pokemonTypeStyles[type]} p-1  rounded-md font-bold`} key={`immune${type}`}>
