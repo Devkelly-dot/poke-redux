@@ -353,9 +353,10 @@ export default function PokemonInfo()
                     </div>
                     
                     <div className='bg-blue-50 text-center'>
-                    <div className=' font-semibold'>Select A {myPokemon.name} From Your Party</div>
                         {
-                            same_party_pokemon.length>0?<select className=' w-full'
+                            same_party_pokemon.length>0?<div>
+                            <div className=' font-semibold'>Select A {myPokemon.name} From Your Party</div>
+                            <select className=' w-full'
                                 onChange={(e)=>changeSelectedPartyPokemon(e)}
                             >
                                 {same_party_pokemon.map((pokemon:any,index:number)=>(
@@ -363,7 +364,7 @@ export default function PokemonInfo()
                                         {pokemon.pokemon.name} {index+1}
                                     </option>
                                 ))}
-                            </select>:<></>
+                            </select></div>:<></>
                         }
                         <hr></hr>
                     </div>
