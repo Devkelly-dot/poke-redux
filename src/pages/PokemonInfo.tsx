@@ -7,6 +7,7 @@ import { add_pokemon as add_to_party, update_pokemon as update_party_pokemon } f
 import info_axios from '../lib/api/pokeinfo_api'
 import { useEffect, useState } from 'react';
 import { AbilityType, MoveType, PokeType } from "../partials/pokemon/definePokemon";
+import { Chart } from 'react-chartjs-2';
 
 export default function PokemonInfo()
 {
@@ -31,6 +32,37 @@ export default function PokemonInfo()
     const [selectedAbility,setSelectedAbility] = useState({name:'',desc:''})
     const [same_party_pokemon,setSamePartyPokemon] = useState<{pokemon:PokeType, index:number}[]>([])
     const [partyPokemonMoves,setPartyPokemonMoves] = useState<MoveType[]>([])
+    
+    const [showAbilities, setShowAbilities] = useState(false);
+    const [showMoves,setShowMoves] = useState(false);
+    const [showStats, setShowStats] = useState(false);
+
+    const [statGraphData,setStatGraphData] = useState(
+        {
+            labels: [
+                'HP',
+                'Attack',
+                'Defense',
+                'Special Attack',
+                'Special Defense',
+                'Speed'
+            ],
+            datasets: [{
+                label: 'Base Stats',
+                data: [1, 1, 1, 1, 1, 1],
+                fill: true,
+                backgroundColor: [
+                    'rgba(227, 87, 90, 1)',
+                    'rgba(227, 149, 90, 1)',
+                    'rgba(234, 220, 99, 1)',
+                    'rgba(63, 171, 218, 1)',
+                    'rgba(63, 187, 104, 1)',
+                    'rgba(233, 122, 225, 1)'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    );
 
     useEffect(()=>{
         async function fetch_pokeInfo(pokemon:PokeType)
@@ -321,64 +353,100 @@ export default function PokemonInfo()
                         <hr></hr>
                     </div>
 
-                    <div className='grid grid-cols-2'>
-                        <div>
-                            <h3 className='text-center h-8 bg-blue-50'>Abilities</h3>
-                            <ul className='overflow-y-scroll h-64'>
-                            {
-                                myPokemon.ability?.map((ability)=>
-                                    <li 
-                                        onClick={()=>{selectedAbility.name===ability.name?setSelectedAbility({name:'',desc:''}):setSelectedAbility({name:ability.name,desc:ability.description||''})}} 
-                                        className={`${selectedAbility.name===ability.name?"bg-blue-50":""} cursor-pointer`}
-                                        key={ability.name}>
-                                            {ability.name}
-                                        </li>
-                                )
-                            }
-                            </ul>
+                    {showAbilities?<div>
+                        <button 
+                            onClick={()=>{setShowAbilities(false)}} 
+                            className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
+                                Hide Abilities
+                        </button>
+                        <div className='grid grid-cols-2'>
+                            <div>
+                                <h3 className='text-center h-8 bg-blue-50'>Abilities</h3>
+                                <ul className='overflow-y-scroll h-64'>
+                                {
+                                    myPokemon.ability?.map((ability)=>
+                                        <li 
+                                            onClick={()=>{selectedAbility.name===ability.name?setSelectedAbility({name:'',desc:''}):setSelectedAbility({name:ability.name,desc:ability.description||''})}} 
+                                            className={`${selectedAbility.name===ability.name?"bg-blue-50":""} cursor-pointer`}
+                                            key={ability.name}>
+                                                {ability.name}
+                                            </li>
+                                    )
+                                }
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 className='text-center h-8 bg-blue-50'>{selectedAbility.name}</h3>
+                                <div>{selectedAbility.desc}</div>
+                                {
+                                    same_party_pokemon.length>0&&selectedAbility.name!==''?<div>
+                                        <button onClick={()=>change_party_poke_ability(SelectedPartyPokemon)} className='font-semibold'>Use This Ability On Selected Pokemon</button>
+                                    </div>:<></>
+                                }
+                                
+                            </div>
                         </div>
-                        <div>
-                            <h3 className='text-center h-8 bg-blue-50'>{selectedAbility.name}</h3>
-                            <div>{selectedAbility.desc}</div>
-                            {
-                                same_party_pokemon.length>0&&selectedAbility.name!==''?<div>
-                                    <button onClick={()=>change_party_poke_ability(SelectedPartyPokemon)} className='font-semibold'>Use This Ability On Selected Pokemon</button>
-                                </div>:<></>
-                            }
-                            
+                    </div>:<button 
+                            onClick={()=>{setShowAbilities(true)}} 
+                            className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
+                                Show Abilities
+                        </button>}
+                    
+                    {showMoves?<div>
+                        <button 
+                            onClick={()=>{setShowMoves(false)}} 
+                            className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
+                                Hide Moves
+                        </button>
+                        <div className='grid grid-cols-2'>
+                            <div>
+                                <h3 className='text-center bg-blue-50 h-8'>Moves</h3>
+                                <ul className='overflow-y-scroll h-64'>
+                                {
+                                    myPokemon.move?.map((move)=>
+                                        <li 
+                                            onClick={()=>{selectedMove.name===move.name?setSelectedMove({name:'',desc:''}):setSelectedMove({name:move.name,desc:''})}} 
+                                            className={
+                                                `${selectedMove.name===move.name?"bg-blue-50":""} 
+                                                ${partyPokemonMoves.some(partyMove => move.name === partyMove.name) ? "bg-red-200" : ""}
+                                                cursor-pointer` }
+                                            key={move.name}>
+                                                {move.name}
+                                            </li>
+                                    )
+                                }
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 className='text-center h-8 bg-blue-50'>{selectedMove.name}</h3>
+                                <div className='mb-2'>{selectedMove.desc}</div>
+                                {
+                                    same_party_pokemon.length>0&&selectedMove.name!==''?<div>
+                                        <button onClick={()=>change_party_poke_move(SelectedPartyPokemon)} className='font-semibold'>Add This Move To Selected Pokemon</button>
+                                    </div>:<></>
+                                }
+                            </div>
                         </div>
-                    </div>
-                    <div className='grid grid-cols-2'>
-                        <div>
-                            <h3 className='text-center bg-blue-50 h-8'>Moves</h3>
-                            <ul className='overflow-y-scroll h-64'>
-                            {
-                                myPokemon.move?.map((move)=>
-                                    <li 
-                                        onClick={()=>{selectedMove.name===move.name?setSelectedMove({name:'',desc:''}):setSelectedMove({name:move.name,desc:''})}} 
-                                        className={
-                                            `${selectedMove.name===move.name?"bg-blue-50":""} 
-                                            ${partyPokemonMoves.some(partyMove => move.name === partyMove.name) ? "bg-red-200" : ""}
-                                            cursor-pointer` }
-                                        key={move.name}>
-                                            {move.name}
-                                        </li>
-                                )
-                            }
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className='text-center h-8 bg-blue-50'>{selectedMove.name}</h3>
-                            <div className='mb-2'>{selectedMove.desc}</div>
-                            {
-                                same_party_pokemon.length>0&&selectedMove.name!==''?<div>
-                                    <button onClick={()=>change_party_poke_move(SelectedPartyPokemon)} className='font-semibold'>Add This Move To Selected Pokemon</button>
-                                </div>:<></>
-                            }
-                        </div>
-                    </div>
+                    </div>:<button 
+                            onClick={()=>{setShowMoves(true)}} 
+                            className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
+                                Show Moves
+                        </button>}
 
+                {showStats?<div className='w-screen'>
+                <button 
+                    onClick={()=>{setShowStats(false)}} 
+                    className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
+                        Hide Stats
+                </button>
+                <Chart type='doughnut' data={statGraphData}/>
 
+                </div>:<button 
+                            onClick={()=>{setShowStats(true)}} 
+                            className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
+                                Show Stats
+                        </button>
+                }
                 </div>:<h1>Pokemon not found</h1>
             }
         </div>
