@@ -134,8 +134,23 @@ export default function PokemonInfo()
                     ability:abilities,
                     hasFetched:true,
                 }
+                const stats = request.data.stats;
+                let data = [];
+                for(let i in stats)
+                {
+                    data.push(stats[i].base_stat);
+                }
+
+                let dataSet = {...statGraphData.datasets[0], data:data};
+                let dataSets = [];
+                dataSets.push(dataSet);
+                let graphData = {...statGraphData, datasets:dataSets}
+
+                setStatGraphData(graphData);
+
                 dispatch(update_pokemon({name: new_pokemon.name,pokemon: new_pokemon}))
                 setMyPokemon(new_pokemon);
+                
             } catch (error) {
                 console.error(error);
             }
@@ -148,7 +163,7 @@ export default function PokemonInfo()
             if(target_pokemon)
                 fetch_pokeInfo(target_pokemon)
         }
-    },[all_pokemon, myPokemon])
+    },[all_pokemon, myPokemon, statGraphData])
 
 
     useEffect(()=>{
@@ -433,14 +448,17 @@ export default function PokemonInfo()
                                 Show Moves
                         </button>}
 
-                {showStats?<div className='w-screen'>
+                {showStats?<div>
                 <button 
                     onClick={()=>{setShowStats(false)}} 
                     className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
                         Hide Stats
                 </button>
-                <Chart type='doughnut' data={statGraphData}/>
-
+                <div className='flex justify-center'>
+                    <div className='lg:w-1/2'>
+                        <Chart type='doughnut' data={statGraphData}/>
+                    </div>
+                </div>
                 </div>:<button 
                             onClick={()=>{setShowStats(true)}} 
                             className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-full'>
